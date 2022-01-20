@@ -143,7 +143,28 @@ ORDER BY
   count DESC
 LIMIT
   10;
-
+-- Exercise 9 
+SELECT
+  repo_name,
+  d.new_path AS file,
+  committer.date AS date,
+  LAG(
+    commit
+  ) OVER (PARTITION BY d.new_path ORDER BY committer.date ASC ) AS previous_commit,
+  commit
+  ,
+  LEAD(
+    commit
+  ) OVER (PARTITION BY d.new_path ORDER BY committer.date ASC) AS next_commit,
+FROM
+  `bigquery-public-data.github_repos.sample_commits`,
+  UNNEST (difference) AS d
+WHERE
+  d.new_path LIKE 'kernel/%.c'
+  AND repo_name = 'torvalds/linux' #i have checked all repo name has linux kernel, there is only one repo.
+ORDER BY
+  d.new_path ASC,
+  committer.date ASC
 
 
 
