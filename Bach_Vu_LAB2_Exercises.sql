@@ -146,7 +146,7 @@ LIMIT
 -- Exercise 9 
 SELECT
   repo_name,
-  d.new_path AS file,
+  diff.new_path AS file,
   committer.date AS date,
   LAG(
     commit
@@ -155,15 +155,15 @@ SELECT
   ,
   LEAD(
     commit
-  ) OVER (PARTITION BY d.new_path ORDER BY committer.date ASC) AS next_commit,
+  ) OVER (PARTITION BY diff.new_path ORDER BY committer.date ASC) AS next_commit,
 FROM
   `bigquery-public-data.github_repos.sample_commits`,
-  UNNEST (difference) AS d
+  UNNEST (difference) AS diff
 WHERE
-  d.new_path LIKE 'kernel/%.c'
-  AND repo_name = 'torvalds/linux' #i have checked all repo name has linux kernel, there is only one repo.
+  diff.new_path LIKE 'kernel/%.c'
+  AND repo_name = 'torvalds/linux'
 ORDER BY
-  d.new_path ASC,
+  diff.new_path ASC,
   committer.date ASC
 
 
